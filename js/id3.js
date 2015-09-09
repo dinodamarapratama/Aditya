@@ -6,11 +6,11 @@
 var id3 = function(_s,target,features){
     var targets = _.unique(_s.pluck(target));
     if (targets.length == 1){
-	console.log("end node! "+targets[0]);
+	//console.log("end node! "+targets[0]);
 	return {type:"result", val: targets[0], name: targets[0],alias:targets[0]+randomTag() }; 
     }
     if(features.length == 0){
-	console.log("returning the most dominate feature!!!");
+	//console.log("returning the most dominate feature!!!");
 	var topTarget = mostCommon(_s.pluck(target));
 	return {type:"result", val: topTarget, name: topTarget, alias: topTarget+randomTag()};
     }
@@ -21,7 +21,7 @@ var id3 = function(_s,target,features){
     var node = {name: bestFeature,alias: bestFeature+randomTag()};
     node.type = "feature";
     node.vals = _.map(possibleValues,function(v){
-	console.log("creating a branch for "+v);
+	//console.log("creating a branch for "+v);
 	var _newS = _(_s.filter(function(x) {return x[bestFeature] == v}));
 	var child_node = {name:v,alias:v+randomTag(),type: "feature_value"};
 	child_node.child =  id3(_newS,target,remainingFeatures);
@@ -36,14 +36,9 @@ var predict = function(id3Model,sample) {
     while(root.type != "result"){
 	var attr = root.name;
 	var sampleVal = sample[attr];
-	var childNode = _.detect(root.vals,function(x){return x.name == sampleVal});
-	console.log(root.val );
-	
+	var childNode = _.find(root.vals,function(x){( x.name + "  ---- 	" +sampleVal ); return x.name == sampleVal});
 	root = childNode.child;
-	
     }
-	
-	
     return root.val;
 }
 
@@ -144,7 +139,7 @@ var renderSamples = function(samples,$el,model,target,features){
     _.each(samples,function(s){
 	var features_for_sample = _.map(features,function(x){return s[x]});
 	//$el.append("<tr><td>"+features_for_sample.join('</td><td>')+"</td><td><b>"+predict(model,s)+"</b></td><td>actual: "+s[target]+"</td></tr>");
-	document.getElementById("hasil").innerHTML = "<b>" + predict(model,s) + "</b>";
+	document.getElementById("hasil").innerHTML = "<p><b>Prediksi</b></p><br>" + predict(model,s) + "";
 	//$el.append("<tr><td><b>"+predict(model,s)+"</b></td></tr>");
 	
     })
